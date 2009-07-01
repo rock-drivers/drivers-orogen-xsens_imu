@@ -28,8 +28,13 @@ IMUAcquisition::~IMUAcquisition()
 bool IMUAcquisition::configureHook()
 {
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
-    if( driver->connectDevice( _port.value(), xsens_imu::CAL_AND_ORI_DATA ) ) {
+    if( !driver->open( _port.value() ) ) {
         std::cerr << "Error opening device '" << _port.value() << "'" << std::endl;
+        return false;
+    }
+
+    if( !driver->setReadingMode( xsens_imu::CAL_AND_ORI_DATA ) ) {
+        std::cerr << "Error changing reading mode to CAL_AND_ORI_DATA";
         return false;
     }
 
