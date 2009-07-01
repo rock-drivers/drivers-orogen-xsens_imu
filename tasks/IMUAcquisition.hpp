@@ -1,8 +1,8 @@
-#ifndef IMU_ORIENTATIONACQUISITION_TASK_HPP
-#define IMU_ORIENTATIONACQUISITION_TASK_HPP
+#ifndef IMU_IMUACQUISITION_TASK_HPP
+#define IMU_IMUACQUISITION_TASK_HPP
 
-#include "imu/OrientationAcquisitionBase.hpp"
-
+#include "imu/IMUAcquisitionBase.hpp"
+#include "XsensDriver.hpp"
 
 namespace RTT
 {
@@ -11,15 +11,16 @@ namespace RTT
 
 
 namespace imu {
-    class OrientationAcquisition : public OrientationAcquisitionBase
+    class IMUAcquisition : public IMUAcquisitionBase
     {
-	friend class OrientationAcquisitionBase;
+	friend class IMUAcquisitionBase;
     protected:
-    
-    
+
+    xsens_imu::XsensDriver* m_driver;
 
     public:
-        OrientationAcquisition(std::string const& name = "imu::OrientationAcquisition");
+        IMUAcquisition(std::string const& name = "imu::IMUAcquisition");
+        ~IMUAcquisition();
 
         RTT::FileDescriptorActivity* getFileDescriptorActivity();
 
@@ -36,7 +37,7 @@ namespace imu {
          *     ...
          *   end
          */
-        // bool configureHook();
+        bool configureHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to Running. If it returns false, then the component will
@@ -61,7 +62,7 @@ namespace imu {
          * called before starting it again.
          *
          */
-        // void updateHook();
+        void updateHook();
         
 
         /** This hook is called by Orocos when the component is in the
