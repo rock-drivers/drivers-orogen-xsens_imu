@@ -1,28 +1,23 @@
-#ifndef IMU_IMUACQUISITION_TASK_HPP
-#define IMU_IMUACQUISITION_TASK_HPP
+#ifndef IMU_XSENSTASK_TASK_HPP
+#define IMU_XSENSTASK_TASK_HPP
 
-#include "imu/IMUAcquisitionBase.hpp"
+#include "imu/XsensTaskBase.hpp"
 #include "XsensDriver.hpp"
-
-namespace RTT
-{
-    class FileDescriptorActivity;
-}
 
 
 namespace imu {
-    class IMUAcquisition : public IMUAcquisitionBase
+    class XsensTask : public XsensTaskBase
     {
-	friend class IMUAcquisitionBase;
+	friend class XsensTaskBase;
     protected:
-
+    
     xsens_imu::XsensDriver* m_driver;
 
     public:
-        IMUAcquisition(std::string const& name = "imu::IMUAcquisition");
-        ~IMUAcquisition();
+        XsensTask(std::string const& name = "imu::XsensTask");
+        ~XsensTask();
 
-        RTT::FileDescriptorActivity* getFileDescriptorActivity();
+        
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the

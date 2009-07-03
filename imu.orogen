@@ -5,22 +5,30 @@ using_library 'xsens'
 
 import_types_from "XsensTypes.hpp"
 
-task_context 'IMUAcquisition' do
+task_context 'XsensTask' do
     needs_configuration
-    fd_driven
 
     property('port', '/std/string', "").
         doc 'the device port'
 
-    output_port('imu_readings', 'DFKI/IMUReading').
-        doc 'IMUReading which consists of orientation and calibrated sensor measurements.'
+    property('mode', '/xsens_imu/imuMode').
+        doc 'configuration mode of the IMU (Orientation and/or Raw measurements)'
+
+    output_port('orientation_readings', 'DFKI/OrientationReading').
+        doc 'provides OrientationReading samples of timestamped quaternions'
+    output_port('acc_readings', 'DFKI/AccelerometerReading').
+        doc 'provides AccelerometerReading samples of timestamped vectors'
+    output_port('gyro_readings', 'DFKI/AngularRateReading').
+        doc 'provides AngularRateReading samples of timestamped vectors'
+    output_port('mag_readings', 'DFKI/MagnetometerReading').
+        doc 'provides MagnetometerReading samples of timestamped vectors'
 end
 
 static_deployment do
-    acquisition = task('Acquisition', 'IMUAcquisition')
+    acquisition = task('Acquisition', 'XsensTask')
 
     logger('orientations.log').
-        report(acquisition.imu_readings)
+        report(acquisition.orientation_readings)
 
     # Sets up a task browser on the following task
     if !corba_enabled?
