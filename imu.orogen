@@ -7,12 +7,16 @@ import_types_from "XsensTypes.hpp"
 
 task_context 'XsensTask' do
     needs_configuration
+    fd_driven
 
     property('port', '/std/string', "").
         doc 'the device port'
 
     property('mode', '/xsens_imu/imuMode').
         doc 'configuration mode of the IMU (Orientation and/or Raw measurements)'
+
+    property('max_timeouts', 'int').
+        doc 'number of consecutive timeouts after which an error is raised'
 
     output_port('orientation_readings', 'DFKI/OrientationReading').
         doc 'provides OrientationReading samples of timestamped quaternions'

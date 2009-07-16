@@ -4,6 +4,10 @@
 #include "imu/XsensTaskBase.hpp"
 #include "XsensDriver.hpp"
 
+namespace RTT
+{
+    class FileDescriptorActivity;
+}
 
 namespace imu {
     class XsensTask : public XsensTaskBase
@@ -12,12 +16,13 @@ namespace imu {
     protected:
     
     xsens_imu::XsensDriver* m_driver;
+    int timeout_counter;
 
     public:
         XsensTask(std::string const& name = "imu::XsensTask");
         ~XsensTask();
-
         
+        RTT::FileDescriptorActivity* getFileDescriptorActivity();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
@@ -77,7 +82,7 @@ namespace imu {
          * from Stopped to PreOperational, requiring the call to configureHook()
          * before calling start() again.
          */
-        // void cleanupHook();
+        void cleanupHook();
     };
 }
 
