@@ -31,9 +31,7 @@ end
 static_deployment do
     acquisition = task('XsensTask')
 
-    logger('orientations.log').
-        report(acquisition.orientation_readings)
-
+    add_default_logger
     # Sets up a task browser on the following task
     if !corba_enabled?
         browse acquisition
