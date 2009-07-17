@@ -29,7 +29,7 @@ task_context 'XsensTask' do
 end
 
 static_deployment do
-    acquisition = task('Acquisition', 'XsensTask')
+    acquisition = task('XsensTask')
 
     logger('orientations.log').
         report(acquisition.orientation_readings)
