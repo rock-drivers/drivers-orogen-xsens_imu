@@ -28,8 +28,9 @@ task_context 'XsensTask' do
         doc 'provides MagnetometerReading samples of timestamped vectors'
 end
 
-static_deployment do
-    acquisition = task('XsensTask')
+deployment "test_imu" do
+    do_not_install
+    acquisition = task('Driver', "XsensTask")
 
     add_default_logger
     # Sets up a task browser on the following task
