@@ -8,21 +8,22 @@ end
 
 ENV['PKG_CONFIG_PATH'] = "#{File.expand_path("..", File.dirname(__FILE__))}/build:#{ENV['PKG_CONFIG_PATH']}"
 
-Orocos::Process.spawn 'imu' do |p|
-    driver = p.task 'imu'
+Orocos.initialize
+
+Orocos::Process.spawn 'test_imu' do |p|
+    driver = p.task 'Driver'
     Orocos.log_all_ports
 
     driver.port = ARGV[0]
     driver.configure
     driver.start
 
-    reader = driver.orientation_readings.reader(:type => :buffer, :size => 5)
-    Orocos.guard do
-        loop do
-            if sample = reader.read
-            pp sample.stamp
-            end
-        end
+    reader = driver.orientation_readings.reader(:type => :buffer, :size => 10)
+    loop do
+	if sample = reader.read
+	    print("#{sample.value.im[0]} #{sample.value.im[1]} #{sample.value.im[2]} #{sample.value.re}\r\n")
+	end
+	sleep 0.01
     end
 end
 
