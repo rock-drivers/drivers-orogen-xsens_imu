@@ -12,20 +12,11 @@ task_context 'XsensTask' do
     property('port', '/std/string', "").
         doc 'the device port'
 
-    property('mode', '/xsens_imu/imuMode').
-        doc 'configuration mode of the IMU (Orientation and/or Raw measurements)'
-
     property('max_timeouts', 'int').
         doc 'number of consecutive timeouts after which an error is raised'
 
-    output_port('orientation_readings', 'DFKI/OrientationReading').
-        doc 'provides OrientationReading samples of timestamped quaternions'
-    output_port('acc_readings', 'DFKI/AccelerometerReading').
-        doc 'provides AccelerometerReading samples of timestamped vectors'
-    output_port('gyro_readings', 'DFKI/AngularRateReading').
-        doc 'provides AngularRateReading samples of timestamped vectors'
-    output_port('mag_readings', 'DFKI/MagnetometerReading').
-        doc 'provides MagnetometerReading samples of timestamped vectors'
+    output_port('imu_readings', '/DFKI/IMUReading').
+        doc 'provides timestamped IMUReading samples containing orientation and calibrated sensor values.'
 end
 
 deployment "test" do
