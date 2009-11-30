@@ -1,6 +1,6 @@
 name 'imu'
 
-import_types_from "dfki"
+import_types_from "base"
 using_library 'xsens'
 
 import_types_from "XsensTypes.hpp"
@@ -15,7 +15,7 @@ task_context 'XsensTask' do
     property('max_timeouts', 'int').
         doc 'number of consecutive timeouts after which an error is raised'
 
-    output_port('imu_readings', '/DFKI/IMUReading').
+    output_port('imu_readings', '/base/IMUReading').
         doc 'provides timestamped IMUReading samples containing orientation and calibrated sensor values.'
 end
 

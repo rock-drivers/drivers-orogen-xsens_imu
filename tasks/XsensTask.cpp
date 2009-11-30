@@ -54,7 +54,7 @@ void XsensTask::updateHook()
     // since this task is fd driven, we assume that the reception of data on
     // the port is the closest we can get to the actual acquisition time. This
     // can later be fixed to using a hardware sync-out from the IMU.
-    DFKI::Time ts = DFKI::Time::now();
+    base::Time ts = base::Time::now();
 
     xsens_imu::errorCodes retval;
     retval = m_driver->getReading();
@@ -62,7 +62,7 @@ void XsensTask::updateHook()
     if( retval == xsens_imu::NO_ERROR ) {
         timeout_counter = 0;
 
-	DFKI::IMUReading reading;
+	base::IMUReading reading;
 	reading.stamp = ts;
 	reading.orientation = m_driver->getOrientation();
 	reading.acc = m_driver->getCalibratedAccData();
