@@ -15,8 +15,10 @@ task_context 'XsensTask' do
     property('max_timeouts', 'int').
         doc 'number of consecutive timeouts after which an error is raised'
 
-    output_port('imu_readings', '/base/IMUReading').
-        doc 'provides timestamped IMUReading samples containing orientation and calibrated sensor values.'
+    output_port('orientation', '/wrappers/samples/RigidBodyState').
+        doc 'provides timestamped IMUReading samples containing the orientation estimate.'
+    output_port('calibrated_sensors', '/wrappers/samples/IMUSensors').
+        doc 'provides timestamped IMUReading samples containing the calibrated sensor readings.'
 end
 
 deployment "test" do

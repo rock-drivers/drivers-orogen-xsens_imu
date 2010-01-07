@@ -1,4 +1,5 @@
 #include "XsensTask.hpp"
+#include <base/samples/rigid_body_state.h>
 
 #include <rtt/FileDescriptorActivity.hpp>
 
@@ -62,14 +63,17 @@ void XsensTask::updateHook()
     if( retval == xsens_imu::NO_ERROR ) {
         timeout_counter = 0;
 
-	base::IMUReading reading;
-	reading.stamp = ts;
+	base::samples::RigidBodyState reading;
+	reading.time = ts;
 	reading.orientation = m_driver->getOrientation();
-	reading.acc = m_driver->getCalibratedAccData();
-	reading.gyro = m_driver->getCalibratedGyroData();
-	reading.mag = m_driver->getCalibratedMagData();
+        _orientation.write( reading );
 
-	_imu_readings.write( reading );
+        base::samples::IMUSensors sensors;
+        sensors.time = ts;
+	sensors.acc   = m_driver->getCalibratedAccData();
+	sensors.gyro  = m_driver->getCalibratedGyroData();
+	sensors.mag   = m_driver->getCalibratedMagData();
+	_calibrated_sensors.write( sensors );
    } 
 
     if( retval == xsens_imu::ERROR_TIMEOUT ) {
