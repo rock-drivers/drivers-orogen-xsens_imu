@@ -1,32 +1,31 @@
-#include "XsensTask.hpp"
-#include <base/samples/rigid_body_state.h>
+#include "Task.hpp"
 
 #include <rtt/FileDescriptorActivity.hpp>
 
-using namespace imu;
+
+using namespace xsens_imu;
 
 
-RTT::FileDescriptorActivity* XsensTask::getFileDescriptorActivity()
+RTT::FileDescriptorActivity* Task::getFileDescriptorActivity()
 { return dynamic_cast< RTT::FileDescriptorActivity* >(getActivity().get()); }
 
 
-XsensTask::XsensTask(std::string const& name)
-    : XsensTaskBase(name), m_driver(NULL), timeout_counter(0)
+Task::Task(std::string const& name)
+    : TaskBase(name), m_driver(NULL), timeout_counter(0)
 {
-    _max_timeouts = 5;
 }
 
-XsensTask::~XsensTask()
+Task::~Task()
 {
     delete m_driver;
 }
- 
+
 
 /// The following lines are template definitions for the various state machine
-// hooks defined by Orocos::RTT. See XsensTask.hpp for more detailed
+// hooks defined by Orocos::RTT. See Task.hpp for more detailed
 // documentation about them.
 
-bool XsensTask::configureHook()
+bool Task::configureHook()
 {
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
     if( !driver->open( _port.value() ) ) {
@@ -45,12 +44,12 @@ bool XsensTask::configureHook()
     return true;
 }
 
-// bool IMUAcquisition::startHook()
+// bool Task::startHook()
 // {
 //     return true;
 // }
 
-void XsensTask::updateHook()
+void Task::updateHook()
 {
     // since this task is fd driven, we assume that the reception of data on
     // the port is the closest we can get to the actual acquisition time. This
@@ -91,15 +90,16 @@ void XsensTask::updateHook()
     }
 }
 
-// void XsensTask::errorHook()
+// void Task::errorHook()
+// {
+// }
+// void Task::stopHook()
 // {
 // }
 
-// void XsensTask::stopHook()
-// {
-// }
-void XsensTask::cleanupHook()
+void Task::cleanupHook()
 {
+    getFileDescriptorActivity()->unwatch(m_driver->getFileHandle());
     m_driver->close();
 }
 

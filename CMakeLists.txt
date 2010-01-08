@@ -1,14 +1,8 @@
-PROJECT(imu)
+PROJECT(xsens_imu)
 cmake_minimum_required(VERSION 2.6)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-
-find_package(Eigen2 REQUIRED)
-include_directories(${EIGEN2_INCLUDE_DIR})
-add_definitions(-DEIGEN_DONT_VECTORIZE -DEIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT)
-
 SET (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/.orogen/config")
-INCLUDE(imuBase)
+INCLUDE(xsens_imuBase)
 
 # FIND_PACKAGE(KDL)
 # FIND_PACKAGE(OCL)

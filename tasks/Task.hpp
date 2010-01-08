@@ -1,27 +1,29 @@
-#ifndef IMU_XSENSTASK_TASK_HPP
-#define IMU_XSENSTASK_TASK_HPP
+#ifndef XSENS_IMU_TASK_TASK_HPP
+#define XSENS_IMU_TASK_TASK_HPP
 
-#include "imu/XsensTaskBase.hpp"
+#include "xsens_imu/TaskBase.hpp"
 #include "XsensDriver.hpp"
+
 
 namespace RTT
 {
     class FileDescriptorActivity;
 }
 
-namespace imu {
-    class XsensTask : public XsensTaskBase
+
+namespace xsens_imu {
+    class Task : public TaskBase
     {
-	friend class XsensTaskBase;
+	friend class TaskBase;
     protected:
     
-    xsens_imu::XsensDriver* m_driver;
-    int timeout_counter;
+        xsens_imu::XsensDriver* m_driver;
+        int timeout_counter;
 
     public:
-        XsensTask(std::string const& name = "imu::XsensTask");
-        ~XsensTask();
-        
+        Task(std::string const& name = "xsens_imu::Task");
+        ~Task();
+
         RTT::FileDescriptorActivity* getFileDescriptorActivity();
 
         /** This hook is called by Orocos when the state machine transitions

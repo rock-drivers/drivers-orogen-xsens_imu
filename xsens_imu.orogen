@@ -1,11 +1,11 @@
-name 'imu'
+name 'xsens_imu'
 
 import_types_from "base"
 using_library 'xsens'
 
 import_types_from "XsensTypes.hpp"
 
-task_context 'XsensTask' do
+task_context 'Task' do
     needs_configuration
     fd_driven
 
@@ -23,7 +23,7 @@ end
 
 deployment "test" do
     do_not_install
-    acquisition = task('driver', "XsensTask")
+    acquisition = task('driver', "Task")
 
     add_default_logger
     # Sets up a task browser on the following task
@@ -31,5 +31,4 @@ deployment "test" do
         browse acquisition
     end
 end
-
 
