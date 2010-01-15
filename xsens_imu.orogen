@@ -15,8 +15,8 @@ task_context 'Task' do
     property('max_timeouts', 'int').
         doc 'number of consecutive timeouts after which an error is raised'
 
-    output_port('orientation', '/wrappers/samples/RigidBodyState').
-        doc 'provides timestamped IMUReading samples containing the orientation estimate.'
+    output_port('orientation_samples', '/wrappers/samples/RigidBodyState').
+        doc 'provides timestamped IMUReading samples containing the orientation estimate as reported by the IMU.'
     output_port('calibrated_sensors', '/wrappers/samples/IMUSensors').
         doc 'provides timestamped IMUReading samples containing the calibrated sensor readings.'
 end

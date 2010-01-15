@@ -65,7 +65,7 @@ void Task::updateHook()
 	base::samples::RigidBodyState reading;
 	reading.time = ts;
 	reading.orientation = m_driver->getOrientation();
-        _orientation.write( reading );
+        _orientation_samples.write( reading );
 
         base::samples::IMUSensors sensors;
         sensors.time = ts;
