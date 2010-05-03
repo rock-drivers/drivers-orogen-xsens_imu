@@ -1,12 +1,17 @@
+<?xml version="1.0"?>
 <package>
-    <description brief="oroGen driver for the Xsens IMU">
+  <description brief="oroGen driver for the Xsens IMU">
         This oroGen component offers an integrated driver for the Xsens IMU
     </description>
-    <author>Sylvain Joyeux/sylvain.joyeux@dfki.de</author>
-    <copyright>
+  <author>Sylvain Joyeux/sylvain.joyeux@dfki.de</author>
+  <copyright>
         DFKI/robotik@dfki.de
         Sylvain Joyeux/sylvain.joyeux@m4x.org
     </copyright>
-    <license>GPL v2 or later</license>
+  <license>GPL v2 or later</license>
+  <depend package="drivers/xsens"/>
+  <depend package="orocos/base"/>
+  <depend package="orocos/logger"/>
+  <depend package="orocos/orogen"/>
+  <depend package="orocos/rtt"/>
 </package>
-
