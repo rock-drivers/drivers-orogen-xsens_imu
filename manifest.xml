@@ -10,6 +10,7 @@
     </copyright>
   <license>GPL v2 or later</license>
   <depend package="drivers/xsens"/>
+  <depend package="drivers/aggregator"/>
   <depend package="orocos/base"/>
   <depend package="orocos/logger"/>
   <depend package="orocos/orogen"/>

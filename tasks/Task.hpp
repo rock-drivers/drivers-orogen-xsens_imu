@@ -9,6 +9,10 @@ namespace RTT
 {
     class FileDescriptorActivity;
 }
+namespace aggregator
+{
+    class TimestampEstimator;
+}
 
 
 namespace xsens_imu {
@@ -19,6 +23,7 @@ namespace xsens_imu {
     
         xsens_imu::XsensDriver* m_driver;
         int timeout_counter;
+	aggregator::TimestampEstimator* timestamp_estimator;
 
     public:
         Task(std::string const& name = "xsens_imu::Task");

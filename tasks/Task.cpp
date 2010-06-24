@@ -1,6 +1,7 @@
 #include "Task.hpp"
 
 #include <rtt/FileDescriptorActivity.hpp>
+#include <aggregator.hpp>
 
 
 using namespace xsens_imu;
@@ -11,13 +12,14 @@ RTT::FileDescriptorActivity* Task::getFileDescriptorActivity()
 
 
 Task::Task(std::string const& name)
-    : TaskBase(name), m_driver(NULL), timeout_counter(0)
+    : TaskBase(name), m_driver(NULL), timeout_counter(0), timestamp_estimator(0)
 {
 }
 
 Task::~Task()
 {
     delete m_driver;
+    delete timestamp_estimator;
 }
 
 
@@ -27,6 +29,8 @@ Task::~Task()
 
 bool Task::configureHook()
 {
+    timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(2));
+
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
     if( !driver->open( _port.value() ) ) {
         std::cerr << "Error opening device '" << _port.value() << "'" << std::endl;
@@ -54,10 +58,10 @@ void Task::updateHook()
     // since this task is fd driven, we assume that the reception of data on
     // the port is the closest we can get to the actual acquisition time. This
     // can later be fixed to using a hardware sync-out from the IMU.
-    base::Time ts = base::Time::now();
 
     xsens_imu::errorCodes retval;
     retval = m_driver->getReading();
+    base::Time ts = timestamp_estimator->update(base::Time::now());
 
     if( retval == xsens_imu::NO_ERROR ) {
         timeout_counter = 0;
@@ -101,5 +105,7 @@ void Task::cleanupHook()
 {
     getFileDescriptorActivity()->unwatch(m_driver->getFileHandle());
     m_driver->close();
+    delete timestamp_estimator;
+    timestamp_estimator = 0;
 }
 
