@@ -19,6 +19,8 @@ task_context 'Task' do
         doc 'provides timestamped IMUReading samples containing the orientation estimate as reported by the IMU.'
     output_port('calibrated_sensors', '/wrappers/samples/IMUSensors').
         doc 'provides timestamped IMUReading samples containing the calibrated sensor readings.'
+
+    fatal_states :IO_ERROR, :DRIVER_ERROR
 end
 
 deployment "test" do

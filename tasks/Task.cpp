@@ -84,13 +84,13 @@ void Task::updateHook()
 
         if( timeout_counter >= _max_timeouts ) {
             std::cerr << "IMU driver timout." << std::endl;
-            return error();
+            return fatal(IO_ERROR);
         }
    }
 
     if( retval == xsens_imu::ERROR_OTHER ) {
         std::cerr << "IMU driver error" << std::endl;
-        return error();
+        return fatal(DRIVER_ERROR);
     }
 }
 
