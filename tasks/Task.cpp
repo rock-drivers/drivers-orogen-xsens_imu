@@ -42,6 +42,11 @@ bool Task::configureHook()
         return false;
     }
     
+    // if( !driver->setScenario( _scenario.get() ) ) {
+    //     std::cerr << "Error changing scenario to " << _scenario.get() << std::endl;
+    //     return false;
+    // }
+    
     getFileDescriptorActivity()->watch(driver->getFileHandle());
 
     m_driver = driver.release();
