@@ -71,9 +71,9 @@ void Task::updateHook()
 
     xsens_imu::errorCodes retval;
     retval = m_driver->getReading();
-    base::Time ts = timestamp_estimator->update(base::Time::now());
 
     if( retval == xsens_imu::NO_ERROR ) {
+	base::Time ts = timestamp_estimator->update(base::Time::now());
         timeout_counter = 0;
 
 	base::samples::RigidBodyState reading;
