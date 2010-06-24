@@ -1,7 +1,7 @@
 #include "Task.hpp"
 
 #include <rtt/FileDescriptorActivity.hpp>
-#include <aggregator.hpp>
+#include <TimestampEstimator.hpp>
 
 
 using namespace xsens_imu;
