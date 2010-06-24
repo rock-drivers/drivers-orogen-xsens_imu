@@ -53,10 +53,15 @@ bool Task::configureHook()
     return true;
 }
 
-// bool Task::startHook()
-// {
-//     return true;
-// }
+bool Task::startHook()
+{
+    int retval;
+    do
+    {
+	retval = m_driver->getReading();
+    }
+    while(retval == xsens_imu::NO_ERROR);
+}
 
 void Task::updateHook()
 {
