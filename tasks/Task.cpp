@@ -63,6 +63,7 @@ bool Task::startHook()
     }
     while(retval == xsens_imu::NO_ERROR);
     m_driver->setTimeout(100);
+    return true;
 }
 
 void Task::updateHook()
