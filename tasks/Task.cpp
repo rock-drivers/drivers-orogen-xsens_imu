@@ -55,12 +55,14 @@ bool Task::configureHook()
 
 bool Task::startHook()
 {
+    m_driver->setTimeout(1);
     int retval;
     do
     {
 	retval = m_driver->getReading();
     }
     while(retval == xsens_imu::NO_ERROR);
+    m_driver->setTimeout(100);
 }
 
 void Task::updateHook()
