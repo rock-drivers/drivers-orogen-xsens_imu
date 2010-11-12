@@ -9,10 +9,10 @@
         Sylvain Joyeux/sylvain.joyeux@m4x.org
     </copyright>
   <license>GPL v2 or later</license>
-  <depend package="drivers/xsens"/>
+
+  <depend package="drivers/xsens_imu"/>
   <depend package="drivers/aggregator"/>
-  <depend package="orocos/base"/>
-  <depend package="orocos/logger"/>
-  <depend package="orocos/orogen"/>
-  <depend package="orocos/rtt"/>
+  <depend package="modules/base"/>
+  <depend package="modules/logger"/>
+  <depend package="orogen"/>
 </package>

@@ -2,20 +2,14 @@
 #define XSENS_IMU_TASK_TASK_HPP
 
 #include "xsens_imu/TaskBase.hpp"
-#include "XsensDriver.hpp"
 
-
-namespace RTT
-{
-    class FileDescriptorActivity;
-}
 namespace aggregator
 {
     class TimestampEstimator;
 }
 
-
 namespace xsens_imu {
+    class XsensDriver;
     class Task : public TaskBase
     {
 	friend class TaskBase;
@@ -28,8 +22,6 @@ namespace xsens_imu {
     public:
         Task(std::string const& name = "xsens_imu::Task");
         ~Task();
-
-        RTT::FileDescriptorActivity* getFileDescriptorActivity();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
@@ -70,7 +62,6 @@ namespace xsens_imu {
          *
          */
         void updateHook();
-        
 
         /** This hook is called by Orocos when the component is in the
          * RunTimeError state, at each activity step. See the discussion in

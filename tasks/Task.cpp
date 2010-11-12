@@ -1,15 +1,11 @@
 #include "Task.hpp"
 
-#include <rtt/FileDescriptorActivity.hpp>
+#include <rtt/extras/FileDescriptorActivity.hpp>
+#include "XsensDriver.hpp"
 #include <TimestampEstimator.hpp>
 
 
 using namespace xsens_imu;
-
-
-RTT::FileDescriptorActivity* Task::getFileDescriptorActivity()
-{ return dynamic_cast< RTT::FileDescriptorActivity* >(getActivity().get()); }
-
 
 Task::Task(std::string const& name)
     : TaskBase(name), m_driver(NULL), timeout_counter(0), timestamp_estimator(0)
@@ -47,7 +43,13 @@ bool Task::configureHook()
     //     return false;
     // }
     
-    getFileDescriptorActivity()->watch(driver->getFileHandle());
+    RTT::extras::FileDescriptorActivity* fd_activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
+    if (fd_activity)
+    {
+        fd_activity->watch(driver->getFileHandle());
+        fd_activity->setTimeout(_timeout);
+    }
 
     m_driver = driver.release();
     return true;
@@ -55,6 +57,8 @@ bool Task::configureHook()
 
 bool Task::startHook()
 {
+    // Clear the IO buffers, to avoid sending really old data as our first
+    // samples
     m_driver->setTimeout(1);
     int retval;
     do
@@ -62,7 +66,7 @@ bool Task::startHook()
 	retval = m_driver->getReading();
     }
     while(retval == xsens_imu::NO_ERROR);
-    m_driver->setTimeout(100);
+    m_driver->setTimeout(_timeout);
     return true;
 }
 
@@ -116,8 +120,14 @@ void Task::updateHook()
 
 void Task::cleanupHook()
 {
-    getFileDescriptorActivity()->unwatch(m_driver->getFileHandle());
+    RTT::extras::FileDescriptorActivity* fd_activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
+    if (fd_activity)
+        fd_activity->unwatch(m_driver->getFileHandle());
+
     m_driver->close();
+    delete m_driver;
+    m_driver = 0;
     delete timestamp_estimator;
     timestamp_estimator = 0;
 }

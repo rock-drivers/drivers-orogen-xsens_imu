@@ -11,6 +11,8 @@ task_context 'Task' do
 
     property('port', '/std/string', "").
         doc 'the device port'
+    property('timeout', 'int', 100).
+        doc 'the IO timeout in milliseconds'
     property('scenario', '/std/string', 'human').
     	doc 'the filter scenario. Use the xsensTest application to list the available ones'
 
