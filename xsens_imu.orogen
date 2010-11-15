@@ -19,9 +19,9 @@ task_context 'Task' do
     property('max_timeouts', 'int').
         doc 'number of consecutive timeouts after which an error is raised'
 
-    output_port('orientation_samples', '/wrappers/samples/RigidBodyState').
+    output_port('orientation_samples', '/base/samples/RigidBodyState').
         doc 'provides timestamped IMUReading samples containing the orientation estimate as reported by the IMU.'
-    output_port('calibrated_sensors', '/wrappers/samples/IMUSensors').
+    output_port('calibrated_sensors', '/base/samples/IMUSensors').
         doc 'provides timestamped IMUReading samples containing the calibrated sensor readings.'
 
     exception_states :IO_ERROR, :DRIVER_ERROR
