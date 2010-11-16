@@ -1,13 +1,15 @@
+# Generated from orogen/lib/orogen/templates/tasks/CMakeLists.txt
+
 include(xsens_imuTaskLib)
-ADD_LIBRARY(${XSENS_IMU_TASKLIB_NAME} SHARED 
-    ${XSENS_IMU_TASKLIB_SOURCES})
 
 pkg_check_modules(SAMPLE_AGGREGATOR REQUIRED aggregator)
 include_directories(${SAMPLE_AGGREGATOR_INCLUDE_DIRS})
 link_directories(${SAMPLE_AGGREGATOR_LIBRARY_DIRS})
 
+ADD_LIBRARY(${XSENS_IMU_TASKLIB_NAME} SHARED 
+    ${XSENS_IMU_TASKLIB_SOURCES})
 add_dependencies(${XSENS_IMU_TASKLIB_NAME}
-    regen-toolkit)
+    regen-typekit)
 
 
 TARGET_LINK_LIBRARIES(${XSENS_IMU_TASKLIB_NAME}
