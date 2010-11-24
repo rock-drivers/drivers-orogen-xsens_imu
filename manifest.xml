@@ -12,7 +12,7 @@
 
   <depend package="drivers/xsens_imu"/>
   <depend package="drivers/aggregator"/>
-  <depend package="modules/base"/>
-  <depend package="modules/logger"/>
+  <depend package="base/orogen/types"/>
+  <depend package="tools/logger"/>
   <depend package="orogen"/>
 </package>
