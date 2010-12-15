@@ -42,14 +42,6 @@ bool Task::configureHook()
     //     std::cerr << "Error changing scenario to " << _scenario.get() << std::endl;
     //     return false;
     // }
-    
-    RTT::extras::FileDescriptorActivity* fd_activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    if (fd_activity)
-    {
-        fd_activity->watch(driver->getFileHandle());
-        fd_activity->setTimeout(_timeout);
-    }
 
     m_driver = driver.release();
     return true;
@@ -57,6 +49,14 @@ bool Task::configureHook()
 
 bool Task::startHook()
 {
+    RTT::extras::FileDescriptorActivity* fd_activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
+    if (fd_activity)
+    {
+        fd_activity->watch(m_driver->getFileHandle());
+        fd_activity->setTimeout(_timeout);
+    }
+
     // Clear the IO buffers, to avoid sending really old data as our first
     // samples
     m_driver->setTimeout(1);
@@ -114,17 +114,16 @@ void Task::updateHook()
 // void Task::errorHook()
 // {
 // }
-// void Task::stopHook()
-// {
-// }
-
-void Task::cleanupHook()
+void Task::stopHook()
 {
     RTT::extras::FileDescriptorActivity* fd_activity =
         getActivity<RTT::extras::FileDescriptorActivity>();
     if (fd_activity)
-        fd_activity->unwatch(m_driver->getFileHandle());
+        fd_activity->clearAllWatches();
+}
 
+void Task::cleanupHook()
+{
     m_driver->close();
     delete m_driver;
     m_driver = 0;
