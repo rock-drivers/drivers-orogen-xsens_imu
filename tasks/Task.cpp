@@ -25,7 +25,7 @@ Task::~Task()
 
 bool Task::configureHook()
 {
-    timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(20), 20);
+  timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(20), base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY), 20);
 
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
     if( !driver->open( _port.value() ) ) {
