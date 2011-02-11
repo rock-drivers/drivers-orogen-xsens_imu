@@ -65,7 +65,7 @@ bool Task::startHook()
     {
 	retval = m_driver->getReading();
     }
-    while(retval == xsens_imu::NO_ERROR);
+    while(retval != xsens_imu::ERROR_TIMEOUT);
     m_driver->setTimeout(_timeout);
     return true;
 }
