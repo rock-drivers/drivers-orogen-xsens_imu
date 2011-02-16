@@ -25,7 +25,7 @@ Task::~Task()
 
 bool Task::configureHook()
 {
-  timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(20), base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY), 20);
+    timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(20), base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY), INT_MAX);
 
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
     if( !driver->open( _port.value() ) ) {
@@ -80,7 +80,11 @@ void Task::updateHook()
     retval = m_driver->getReading();
 
     if( retval == xsens_imu::NO_ERROR ) {
-	base::Time ts = timestamp_estimator->update(base::Time::now());
+	base::Time recvts = base::Time::now();
+
+	int packet_counter = m_driver->getPacketCounter();
+
+	base::Time ts = timestamp_estimator->update(recvts,packet_counter);
         timeout_counter = 0;
 
 	base::samples::RigidBodyState reading;
