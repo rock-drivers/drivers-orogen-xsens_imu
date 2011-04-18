@@ -9,7 +9,7 @@
 using namespace xsens_imu;
 
 Task::Task(std::string const& name)
-    : TaskBase(name), m_driver(NULL), timeout_counter(0), timestamp_estimator(0)
+    : TaskBase(name), m_driver(NULL), timeout_counter(0)
     , timestamp_synchronizer(0)
 {
 }
@@ -17,7 +17,6 @@ Task::Task(std::string const& name)
 Task::~Task()
 {
     delete m_driver;
-    delete timestamp_estimator;
     delete timestamp_synchronizer;
 }
 
@@ -28,8 +27,6 @@ Task::~Task()
 
 bool Task::configureHook()
 {
-    timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(20), base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY), INT_MAX);
-
     timestamp_synchronizer = new aggregator::TimestampSynchronizer<Packet>(base::Time::fromSeconds(0.05),base::Time::fromSeconds(0),base::Time::fromSeconds(0.01),base::Time::fromSeconds(20),base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY));
 
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
@@ -91,20 +88,19 @@ void Task::updateHook()
 
 	int packet_counter = m_driver->getPacketCounter();
 
-	base::Time ts = timestamp_estimator->update(recvts,packet_counter);
         timeout_counter = 0;
 
 	Packet p;
 
-	p.reading.time = ts;
+	p.reading.time = recvts;
 	p.reading.orientation = m_driver->getOrientation();
 
-	p.sensors.time = ts;
+	p.sensors.time = recvts;
 	p.sensors.acc   = m_driver->getCalibratedAccData();
 	p.sensors.gyro  = m_driver->getCalibratedGyroData();
 	p.sensors.mag   = m_driver->getCalibratedMagData();
 
-	timestamp_synchronizer->pushItem(p,ts);
+	timestamp_synchronizer->pushItem(p,recvts);
     }
 
     if( retval == xsens_imu::ERROR_TIMEOUT ) {
@@ -152,8 +148,6 @@ void Task::cleanupHook()
     m_driver->close();
     delete m_driver;
     m_driver = 0;
-    delete timestamp_estimator;
-    timestamp_estimator = 0;
     delete timestamp_synchronizer;
     timestamp_synchronizer = 0;
 }

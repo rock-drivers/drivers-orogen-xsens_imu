@@ -5,7 +5,6 @@
 
 namespace aggregator
 {
-    class TimestampEstimator;
     template<class Item>
     class TimestampSynchronizer;
 }
@@ -18,7 +17,6 @@ namespace xsens_imu {
     protected:
         xsens_imu::XsensDriver* m_driver;
         int timeout_counter;
-	aggregator::TimestampEstimator* timestamp_estimator;
 
 	struct Packet {
 	    base::samples::RigidBodyState reading;
