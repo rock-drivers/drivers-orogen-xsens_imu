@@ -24,6 +24,9 @@ task_context 'Task' do
     output_port('calibrated_sensors', '/base/samples/IMUSensors').
         doc 'provides timestamped IMUReading samples containing the calibrated sensor readings.'
 
+    input_port('hard_timestamps', '/base/Time').
+        doc 'timestamps of the begin of acquisition, as signaled by sync_out (or signaled to sync_in).'
+
     exception_states :IO_ERROR, :DRIVER_ERROR
 end
 
