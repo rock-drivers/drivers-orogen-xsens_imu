@@ -2,9 +2,7 @@
 
 #include <rtt/extras/FileDescriptorActivity.hpp>
 #include "XsensDriver.hpp"
-#include <TimestampEstimator.hpp>
 #include <TimestampSynchronizer.hpp>
-
 
 using namespace xsens_imu;
 
