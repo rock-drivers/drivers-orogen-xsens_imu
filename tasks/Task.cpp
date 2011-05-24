@@ -98,7 +98,7 @@ void Task::updateHook()
 	p.sensors.gyro  = m_driver->getCalibratedGyroData();
 	p.sensors.mag   = m_driver->getCalibratedMagData();
 
-	timestamp_synchronizer->pushItem(p,recvts);
+	timestamp_synchronizer->pushItem(p,recvts,packet_counter);
     }
 
     if( retval == xsens_imu::ERROR_TIMEOUT ) {
