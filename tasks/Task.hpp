@@ -7,6 +7,7 @@ namespace aggregator
 {
     template<class Item>
     class TimestampSynchronizer;
+    class TimestampEstimator;
 }
 
 namespace xsens_imu {
@@ -23,6 +24,7 @@ namespace xsens_imu {
 	    base::samples::IMUSensors sensors;
 	};
 	aggregator::TimestampSynchronizer<Packet>* timestamp_synchronizer;
+	aggregator::TimestampEstimator* timestamp_estimator;
 
     public:
         Task(std::string const& name = "xsens_imu::Task");

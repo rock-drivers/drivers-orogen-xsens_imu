@@ -3,12 +3,14 @@
 #include <rtt/extras/FileDescriptorActivity.hpp>
 #include "XsensDriver.hpp"
 #include <TimestampSynchronizer.hpp>
+#include <TimestampEstimator.hpp>
 
 using namespace xsens_imu;
 
 Task::Task(std::string const& name)
     : TaskBase(name), m_driver(NULL), timeout_counter(0)
     , timestamp_synchronizer(0)
+    , timestamp_estimator(0)
 {
 }
 
@@ -16,6 +18,7 @@ Task::~Task()
 {
     delete m_driver;
     delete timestamp_synchronizer;
+    delete timestamp_estimator;
 }
 
 
@@ -26,6 +29,7 @@ Task::~Task()
 bool Task::configureHook()
 {
     timestamp_synchronizer = new aggregator::TimestampSynchronizer<Packet>(base::Time::fromSeconds(0.05),base::Time::fromSeconds(0),base::Time::fromSeconds(0.01),base::Time::fromSeconds(20),base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY));
+    timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(20), base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY), INT_MAX);
 
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
     if( !driver->open( _port.value() ) ) {
@@ -85,48 +89,59 @@ void Task::updateHook()
 	base::Time recvts = now;
 
 	int packet_counter = m_driver->getPacketCounter();
-
-        timeout_counter = 0;
+	timeout_counter = 0;
 
 	Packet p;
 
-	p.reading.time = recvts;
 	p.reading.orientation = m_driver->getOrientation();
 
-	p.sensors.time = recvts;
 	p.sensors.acc   = m_driver->getCalibratedAccData();
 	p.sensors.gyro  = m_driver->getCalibratedGyroData();
 	p.sensors.mag   = m_driver->getCalibratedMagData();
 
-	timestamp_synchronizer->pushItem(p,recvts,packet_counter);
+	if (_hard_timestamps.connected()) {
+	    p.reading.time = recvts;
+	    p.sensors.time = recvts;
+	    timestamp_synchronizer->pushItem(p,recvts,packet_counter);
+	} else {
+	    base::Time ts = timestamp_estimator->update(recvts,packet_counter);
+
+	    p.reading.time = ts;
+	    _orientation_samples.write( p.reading );
+
+	    p.sensors.time = ts;
+	    _calibrated_sensors.write( p.sensors );
+	}
     }
 
     if( retval == xsens_imu::ERROR_TIMEOUT ) {
-        timeout_counter++;
+	timeout_counter++;
 
-        if( timeout_counter >= _max_timeouts ) {
-            std::cerr << "IMU driver timout." << std::endl;
-            return exception(IO_ERROR);
-        }
-   }
-
-    if( retval == xsens_imu::ERROR_OTHER ) {
-        std::cerr << "IMU driver error" << std::endl;
-        return exception(DRIVER_ERROR);
+	if( timeout_counter >= _max_timeouts ) {
+	    std::cerr << "IMU driver timout." << std::endl;
+	    return exception(IO_ERROR);
+	}
     }
 
-    base::Time hard_ts;
+    if( retval == xsens_imu::ERROR_OTHER ) {
+	std::cerr << "IMU driver error" << std::endl;
+	return exception(DRIVER_ERROR);
+    }
 
-    while (_hard_timestamps.read(hard_ts) == RTT::NewData)
-	timestamp_synchronizer->pushReference(hard_ts);
+    if (_hard_timestamps.connected()) {
+	base::Time hard_ts;
 
-    Packet p;
-    base::Time ts;
-    while(timestamp_synchronizer->fetchItem(p,ts,now)) {
-	p.reading.time = ts;
-	p.sensors.time = ts;
-	_orientation_samples.write( p.reading );
-	_calibrated_sensors.write( p.sensors );
+	while (_hard_timestamps.read(hard_ts) == RTT::NewData)
+	    timestamp_synchronizer->pushReference(hard_ts);
+
+	Packet p;
+	base::Time ts;
+	while(timestamp_synchronizer->fetchItem(p,ts,now)) {
+	    p.reading.time = ts;
+	    p.sensors.time = ts;
+	    _orientation_samples.write( p.reading );
+	    _calibrated_sensors.write( p.sensors );
+	}
     }
 }
 
@@ -148,5 +163,7 @@ void Task::cleanupHook()
     m_driver = 0;
     delete timestamp_synchronizer;
     timestamp_synchronizer = 0;
+    delete timestamp_estimator;
+    timestamp_estimator = 0;
 }
 
