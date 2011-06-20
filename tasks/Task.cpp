@@ -2,23 +2,20 @@
 
 #include <rtt/extras/FileDescriptorActivity.hpp>
 #include "XsensDriver.hpp"
-#include <TimestampSynchronizer.hpp>
-#include <TimestampEstimator.hpp>
+#include <Timestamper.hpp>
 
 using namespace xsens_imu;
 
 Task::Task(std::string const& name)
     : TaskBase(name), m_driver(NULL), timeout_counter(0)
-    , timestamp_synchronizer(0)
-    , timestamp_estimator(0)
+    , timestamper(0)
 {
 }
 
 Task::~Task()
 {
     delete m_driver;
-    delete timestamp_synchronizer;
-    delete timestamp_estimator;
+    delete timestamper;
 }
 
 
@@ -28,8 +25,7 @@ Task::~Task()
 
 bool Task::configureHook()
 {
-    timestamp_synchronizer = new aggregator::TimestampSynchronizer<Packet>(base::Time::fromSeconds(0.05),base::Time::fromSeconds(0),base::Time::fromSeconds(0.01),base::Time::fromSeconds(20),base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY));
-    timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(20), base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY), INT_MAX);
+    timestamper = new aggregator::Timestamper<Packet>(base::Time::fromSeconds(0.05),base::Time::fromSeconds(0),base::Time::fromSeconds(0.01),base::Time::fromSeconds(20),base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY));
 
     std::auto_ptr<xsens_imu::XsensDriver> driver(new xsens_imu::XsensDriver());
     if( !driver->open( _port.value() ) ) {
@@ -85,6 +81,9 @@ void Task::updateHook()
 
     base::Time now = base::Time::now();
 
+    if (_hard_timestamps.connected())
+	timestamper->enableSynchronization();
+
     if( retval == xsens_imu::NO_ERROR ) {
 	base::Time recvts = now;
 
@@ -99,19 +98,9 @@ void Task::updateHook()
 	p.sensors.gyro  = m_driver->getCalibratedGyroData();
 	p.sensors.mag   = m_driver->getCalibratedMagData();
 
-	if (_hard_timestamps.connected()) {
-	    p.reading.time = recvts;
-	    p.sensors.time = recvts;
-	    timestamp_synchronizer->pushItem(p,recvts,packet_counter);
-	} else {
-	    base::Time ts = timestamp_estimator->update(recvts,packet_counter);
-
-	    p.reading.time = ts;
-	    _orientation_samples.write( p.reading );
-
-	    p.sensors.time = ts;
-	    _calibrated_sensors.write( p.sensors );
-	}
+	p.reading.time = recvts;
+	p.sensors.time = recvts;
+	timestamper->pushItem(p,recvts,packet_counter);
     }
 
     if( retval == xsens_imu::ERROR_TIMEOUT ) {
@@ -128,20 +117,18 @@ void Task::updateHook()
 	return exception(DRIVER_ERROR);
     }
 
-    if (_hard_timestamps.connected()) {
-	base::Time hard_ts;
+    base::Time hard_ts;
 
-	while (_hard_timestamps.read(hard_ts) == RTT::NewData)
-	    timestamp_synchronizer->pushReference(hard_ts);
+    while (_hard_timestamps.read(hard_ts) == RTT::NewData)
+	timestamper->pushReference(hard_ts);
 
-	Packet p;
-	base::Time ts;
-	while(timestamp_synchronizer->fetchItem(p,ts,now)) {
-	    p.reading.time = ts;
-	    p.sensors.time = ts;
-	    _orientation_samples.write( p.reading );
-	    _calibrated_sensors.write( p.sensors );
-	}
+    Packet p;
+    base::Time ts;
+    while(timestamper->fetchItem(p,ts,now)) {
+	p.reading.time = ts;
+	p.sensors.time = ts;
+	_orientation_samples.write( p.reading );
+	_calibrated_sensors.write( p.sensors );
     }
 }
 
@@ -161,9 +148,7 @@ void Task::cleanupHook()
     m_driver->close();
     delete m_driver;
     m_driver = 0;
-    delete timestamp_synchronizer;
-    timestamp_synchronizer = 0;
-    delete timestamp_estimator;
-    timestamp_estimator = 0;
+    delete timestamper;
+    timestamper = 0;
 }
 
