@@ -33,6 +33,11 @@ bool Task::configureHook()
         return false;
     }
 
+    if( !driver->setSyncOut(true, true, true) ) {
+        std::cerr << "Error configuring SyncOut pin";
+        return false;
+    }
+
     if( !driver->setReadingMode( xsens_imu::CAL_AND_ORI_DATA ) ) {
         std::cerr << "Error changing reading mode to CAL_AND_ORI_DATA";
         return false;
