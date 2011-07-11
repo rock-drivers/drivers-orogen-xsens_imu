@@ -128,7 +128,11 @@ void Task::stopHook()
     RTT::extras::FileDescriptorActivity* fd_activity =
         getActivity<RTT::extras::FileDescriptorActivity>();
     if (fd_activity)
+    {
         fd_activity->clearAllWatches();
+        //set timeout back so we don't timeout on the rtt's pipe
+        fd_activity->setTimeout(0);
+    }
 }
 
 void Task::cleanupHook()
