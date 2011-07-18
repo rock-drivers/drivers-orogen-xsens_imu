@@ -118,6 +118,11 @@ void Task::updateHook()
         std::cerr << "IMU driver error" << std::endl;
         return exception(DRIVER_ERROR);
     }
+
+    base::Time hard_ts;
+
+    while (_hard_timestamps.read(hard_ts) == RTT::NewData)
+	timestamp_estimator->updateReference(hard_ts);
 }
 
 // void Task::errorHook()
