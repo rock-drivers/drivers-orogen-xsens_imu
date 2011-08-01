@@ -38,3 +38,7 @@ deployment "test" do
     end
 end
 
+deployment "xsens_imu" do
+    xsens_imu = task('xsens_imu', "Task")
+    add_default_logger
+end
