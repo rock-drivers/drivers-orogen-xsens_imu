@@ -30,9 +30,9 @@ task_context 'Task' do
     exception_states :IO_ERROR, :DRIVER_ERROR
 end
 
-deployment "test" do
-    do_not_install
-    acquisition = task('driver', "Task")
+deployment "xsens_imu" do
+    #do_not_install
+    acquisition = task('xsens_imu', "Task")
 
     add_default_logger
     # Sets up a task browser on the following task
