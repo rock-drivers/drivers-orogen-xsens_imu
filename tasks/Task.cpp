@@ -27,7 +27,7 @@ bool Task::configureHook()
 {
     timestamp_estimator = new aggregator::TimestampEstimator(
 	base::Time::fromSeconds(20),
-	base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY),
+	base::Time::fromSeconds(1.0 / xsens_imu::XsensDriver::DEFAULT_SAMPLE_FREQUENCY),
 	base::Time::fromSeconds(0),
 	INT_MAX);
 
@@ -68,7 +68,7 @@ bool Task::startHook()
 
     // Clear the IO buffers, to avoid sending really old data as our first
     // samples
-    m_driver->setTimeout(500 / xsens_imu::XsensDriver::SAMPLE_FREQUENCY);
+    m_driver->setTimeout(500 / xsens_imu::XsensDriver::DEFAULT_SAMPLE_FREQUENCY);
     int retval;
     do
     {
