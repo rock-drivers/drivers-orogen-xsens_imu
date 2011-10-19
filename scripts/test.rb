@@ -10,8 +10,8 @@ ENV['PKG_CONFIG_PATH'] = "#{File.expand_path("..", File.dirname(__FILE__))}/buil
 
 Orocos.initialize
 
-Orocos::Process.spawn 'test' do |p|
-    driver = p.task 'driver'
+Orocos::Process.run 'xsens_imu' do |p|
+    driver = p.task 'xsens_imu'
     Orocos.log_all_ports
 
     driver.port = ARGV[0]

@@ -31,7 +31,7 @@ task_context 'Task' do
 end
 
 deployment "xsens_imu" do
-    #do_not_install
+    do_not_install
     acquisition = task('xsens_imu', "Task")
 
     add_default_logger
