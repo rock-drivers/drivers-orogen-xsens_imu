@@ -4,6 +4,7 @@ import_types_from "base"
 using_library 'xsens'
 
 import_types_from "XsensTypes.hpp"
+import_types_from "aggregator/TimestampEstimatorStatus.hpp"
 
 task_context 'Task' do
     needs_configuration
@@ -26,6 +27,9 @@ task_context 'Task' do
 
     input_port('hard_timestamps', '/base/Time').
         doc 'timestamps of the begin of acquisition, as signaled by sync_out (or signaled to sync_in).'
+
+    output_port('timestamp_estimator_status', 'aggregator::TimestampEstimatorStatus').
+	doc("Debug output of the TimestampEstimator")
 
     exception_states :IO_ERROR, :DRIVER_ERROR
 end
