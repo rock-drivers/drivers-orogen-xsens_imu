@@ -4,7 +4,7 @@ import_types_from "base"
 using_library 'xsens'
 
 import_types_from "XsensTypes.hpp"
-import_types_from "aggregator/TimestampEstimatorStatus.hpp"
+import_types_from "aggregator"
 
 task_context 'Task' do
     needs_configuration
