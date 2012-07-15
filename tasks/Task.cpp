@@ -76,6 +76,9 @@ bool Task::startHook()
     }
     while(retval != xsens_imu::ERROR_TIMEOUT);
     m_driver->setTimeout(_timeout);
+
+    timestamp_estimator->reset();
+
     return true;
 }
 
