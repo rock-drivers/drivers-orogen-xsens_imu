@@ -16,6 +16,10 @@ task_context 'Task' do
         doc 'the IO timeout in milliseconds'
     property('scenario', '/std/string', 'human').
     	doc 'the filter scenario. Use the xsensTest application to list the available ones'
+    property('imu_frame', '/std/string', 'imu').
+    	doc 'the name of the frame attached to the IMU'
+    property('world_frame', '/std/string', 'world').
+    	doc 'the name of the world frame'
 
     property('max_timeouts', 'int').
         doc 'number of consecutive timeouts after which an error is raised'

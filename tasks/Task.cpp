@@ -101,6 +101,8 @@ void Task::updateHook()
 
 	base::samples::RigidBodyState reading;
 	reading.time = ts;
+	reading.sourceFrame = _imu_frame.value();
+	reading.targetFrame = _world_frame.value();
 	reading.orientation = m_driver->getOrientation();
         _orientation_samples.write( reading );
 
