@@ -1,9 +1,9 @@
 name 'xsens_imu'
 
 import_types_from "base"
-using_library 'xsens'
+using_library "xsens_imu"
 
-import_types_from "XsensTypes.hpp"
+import_types_from "xsens_imu/XsensTypes.hpp"
 import_types_from "aggregator"
 
 task_context 'Task' do

@@ -1,7 +1,7 @@
 #include "Task.hpp"
 
 #include <rtt/extras/FileDescriptorActivity.hpp>
-#include "XsensDriver.hpp"
+#include "xsens_imu/XsensDriver.hpp"
 #include <aggregator/TimestampEstimator.hpp>
 
 
